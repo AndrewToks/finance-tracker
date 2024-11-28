@@ -81,14 +81,14 @@ export default function Home(){
                     }
                 ]
             )
+        }) ;
 
-        })
-            
+        descriptionRef.current.value = ""
+        amountRef.current.value = ""
+
         } catch (error) {
-            console.log(error.message);
-            
+            console.log(error.message);   
         }
-        
     }
     useEffect(()=>{
         const getIncomeData = async () =>{
