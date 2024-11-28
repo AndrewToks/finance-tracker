@@ -6,10 +6,13 @@ import {Doughnut} from 'react-chartjs-2'
 import { useState,useRef, useEffect } from 'react';
 import Modal from '@/components/Modal'
 
+
+//Icons
+import {FaRegTrashAlt} from 'react-icons/fa'
 //Firebase
 
 import {db} from '@/db/firebase'
-import {collection,addDoc, getDocs} from 'firebase/firestore'
+import {collection,addDoc, getDocs, doc, deleteDoc} from 'firebase/firestore'
 ChartJS.register(ArcElement, Tooltip, Legend);
 
 const DUMMY_DATA = [
@@ -65,6 +68,21 @@ export default function Home(){
 
         try {
         const docSnap = await addDoc(collectionRef,newIncome)
+
+        //update
+
+        setIncome(prevState => {
+            return(
+                [
+                    ...prevState,
+                    {
+                        id:docSnap.id,
+                        ...newIncome
+                    }
+                ]
+            )
+
+        })
             
         } catch (error) {
             console.log(error.message);
@@ -72,7 +90,6 @@ export default function Home(){
         }
         
     }
-
     useEffect(()=>{
         const getIncomeData = async () =>{
         const collectionRef = collection(db, 'income');
@@ -82,14 +99,26 @@ export default function Home(){
             return{
                 id: doc.id,
                 ...doc.data(),
-                createdAt: new Data(doc.data().createdAt.toMillis()),
+                createdAt: new Date(doc.data().createdAt.toMillis()),
             }
         })
         setIncome(data)
-        
     }
     getIncomeData();
     },[])
+
+    const deleteIncomeEntryHandler = async (incomeId) => {
+        const docRef = doc(db, 'income', incomeId);
+        try {
+          await deleteDoc(docRef);
+          console.log(`Document with ID ${incomeId} deleted successfully.`);
+          // Optionally update the state to remove the deleted item
+          setIncome((prevState) => prevState.filter((i) => i.id !== incomeId));
+        } catch (error) {
+          console.error(`Error deleting document with ID ${incomeId}:`, error.message);
+        }
+      };
+      
     return(
         <>
         {/*Add Income Modal */}
@@ -104,13 +133,24 @@ export default function Home(){
                 <input name='description' ref={descriptionRef} type="text" placeholder='Enter Income Description' required/>
                 </div>
                <button type='submit' className='btn btn-primary'>Add Entry</button>
+            </form>
+
 
                <div className='flex flex-col gap-4 mt-6'>
                 <h3 className='text-2xl font-bold'>Income History</h3>
-
-
+                {Income.map(i =>{
+                    return(
+                        <div key={i.id} className='flex items-center justify-between'>
+                            <div>
+                                <p className='font-semibold'>{i.description}</p>
+                                <small className='text-xs'>{i.createdAt.toISOString()}</small>
+                            </div>
+                            <p className='flex items-center gap-2'>{currencyFormatter(i.amount)}</p>
+                            <button onClick={() => deleteIncomeEntryHandler(i.id)}><FaRegTrashAlt /></button>
+                        </div>
+                    )
+                })}
                </div>
-            </form>
         </Modal>
         <main className="container max-w-2xl px-6 mx-auto">
         <section className="py-3 ">
