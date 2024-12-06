@@ -1,5 +1,5 @@
 import React from 'react'
-import { currencyFormatter } from '@/db/utils';
+import { currencyFormatter } from '@/lib/utils';
 
 const ExpenseCategory = ({color,title,total}) => {
   return (
