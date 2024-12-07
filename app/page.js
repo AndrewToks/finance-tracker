@@ -5,6 +5,7 @@ import {Chart as ChartJS, ArcElement, Tooltip, Legend} from 'chart.js'
 import {Doughnut} from 'react-chartjs-2'
 import { useState,useContext, useEffect } from 'react';
 import {financeContext} from '@/lib/store/finance-context'
+import AddExpensesModal from "@/components/modals/AddExpensesModal"
 import AddIncomeModal from '@/components/modals/AddIncomeModal';
 
 
@@ -12,6 +13,7 @@ ChartJS.register(ArcElement, Tooltip, Legend);
 
 export default function Home(){
     const [showAddIncomeModal,setShowAddIncomeModal] = useState(false);
+    const [showAddExpenseModal,setShowAddExpenseModal] = useState(false);
 
     const [balance,setBalance] = useState(0)
 
@@ -31,6 +33,9 @@ export default function Home(){
         <>
         {/*Add Income Modal */}
         <AddIncomeModal show={showAddIncomeModal} onClose={setShowAddIncomeModal}/>
+
+        {/* Add Expenses Modal */}
+        <AddExpensesModal show={showAddExpenseModal} onClose={setShowAddExpenseModal} />
         <main className="container max-w-2xl px-6 mx-auto">
         <section className="py-3 ">
             <small className="text-grey-400 text-md">My Balance</small>
@@ -38,7 +43,9 @@ export default function Home(){
         </section>
 
         <section className="flex items-center gap-2 py-3">
-            <button className="btn btn-primary">+ Expenses</button>
+            <button className="btn btn-primary" onClick={()=>{
+                setShowAddExpenseModal(true)
+            }}>+ Expenses</button>
             <button onClick={()=>(setShowAddIncomeModal(true))} className="btn btn-primary-outline">+ Income</button>
         </section>
 
