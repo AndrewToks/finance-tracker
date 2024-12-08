@@ -1,5 +1,5 @@
 import React from 'react'
-import { useRef,useEffect,useContext } from 'react'
+import { useRef, useContext } from 'react'
 import { currencyFormatter } from '@/lib/utils';
 import { financeContext } from '@/lib/store/finance-context';
 

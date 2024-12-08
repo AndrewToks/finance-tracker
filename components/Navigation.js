@@ -1,3 +1,4 @@
+import Image from 'next/image'
 import React from 'react'
 import {ImStatsBars} from 'react-icons/im'
 
@@ -9,7 +10,7 @@ const Navigation = () => {
             <div className="flex items-center gap-2">
                 {/* img */}
                 <div className="h-[40px] w-[40px] rounded-full overflow-hidden">
-                <img src="/busand.jpg" alt="Profile Image" className="w-full h-full object-cover" />
+                <Image src="/busand.jpg" alt="Profile Image" width={500} height={500} className="w-full h-full object-cover" />
                 </div>
                 {/* name */}
                 <small>Hi, Busand!</small>
