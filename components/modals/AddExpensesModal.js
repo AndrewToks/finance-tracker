@@ -1,5 +1,5 @@
 import Modal from '@/components/Modal'
-import { useState,useContext } from 'react'
+import { useState,useContext,useRef } from 'react'
 import { financeContext } from '@/lib/store/finance-context'
 import { v4 as uuidv4 } from 'uuid';
 
@@ -9,9 +9,11 @@ function AddExpensesModal({show,onClose}){
     const [expenseAmount,setExpenseAmount] = useState("");
     const [selectedCategory,setSelectedCategory] = useState(null)
 
-    const {expenses } = useContext(financeContext);
+    const {expenses,addExpenseItem } = useContext(financeContext);
 
-    const addExpensesItemHandler = () =>{
+    const titleRef = useRef()
+
+    const addExpensesItemHandler = async () =>{
 
         const expense = expenses.find(e =>{
             return e.id === selectedCategory
@@ -29,11 +31,18 @@ function AddExpensesModal({show,onClose}){
                 }
             ]
         }
-        console.log(newExpense);
-        // window.location.reload();
-        setExpenseAmount("");
-        setSelectedCategory(null);
-        onClose();
+
+        try {
+            await addExpenseItem(selectedCategory,newExpense);
+            console.log(newExpense);
+            // window.location.reload();
+            setExpenseAmount("");
+            setSelectedCategory(null);
+            onClose();            
+        } catch (error) {
+            console.log(error.message)
+        }
+
         
     }
 
@@ -48,7 +57,16 @@ function AddExpensesModal({show,onClose}){
         {/* Expense Categories */}
         {expenseAmount > 0 && (
             <div className='flex flex-col gap-4 mt-6'>
+                <div className='flex items-center justify-between'>
                 <h3 className='text-2xl capitalize'>Select Expense Category</h3>
+                <button className='text-lime-400 '>+New Category </button>
+                </div>
+
+                <div>
+                    <input type="text" placeholder='Enter title' ref={titleRef} />
+                    <label>Pick Color</label>
+                </div>
+
             {expenses.map((expense)=>{
                 return(
                     <button  
